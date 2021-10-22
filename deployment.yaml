@@ -3,6 +3,8 @@ kind: Deployment
 metadata:
   namespace: sandbox
   name: takahiro-yamakawa-necohandson
+  labels: 
+    foo: bar
 spec:
   replicas: 2  # HPA を使う場合は指定しない
   selector:
