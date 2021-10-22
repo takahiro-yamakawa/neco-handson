@@ -18,7 +18,7 @@ spec:
       # pull secret は各自作ってください
       # https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
       imagePullSecrets:
-      - name: regcred
+      - name: takahiro-yamakawa-regcred
       containers:
       - name: webapp
         image: ghcr.io/cybozu-private/takahiro-yamakawa-necohandson:latest
