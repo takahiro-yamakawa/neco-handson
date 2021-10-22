@@ -1,0 +1,23 @@
+apiVersion: projectcontour.io/v1
+kind: HTTPProxy
+metadata:
+  namespace: sandbox
+  name: takahiro-yamakawa-necohandson
+  annotations:
+    kubernetes.io/tls-acme: "true"
+spec:
+  ingressClassName: global
+  virtualhost:
+    # 自動 dctest 環境では <name>.<namespace>.neco-dev.dev-ne.co
+    fqdn: takahiro-yamakawa-necohandson.sandbox.neco-dev.dev-ne.co
+    tls:
+      secretName: ymmt-test-cert
+  routes:
+    - conditions:
+        - prefix: /
+      timeoutPolicy:
+        response: 2m
+        idle: 5m
+      services:
+        - name: takahiro-yamakawa-handson
+          port: 80

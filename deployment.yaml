@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: sandbox
+  name: takahiro-yamakawa-necohandson
+spec:
+  replicas: 2  # HPA を使う場合は指定しない
+  selector:
+    matchLabels:
+      app: takahiro-yamakawa-necohandson
+  template:
+    metadata:
+      labels:
+        app: takahiro-yamakawa-necohandson
+    spec:
+      # pull secret は各自作ってください
+      # https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+      imagePullSecrets:
+      - name: regcred
+      containers:
+      - name: webapp
+        image: ghcr.io/cybozu-private/takahiro-yamakawa-necohandson:latest
+        resources:
+          requests:  # requests は必ず指定するようにしてください
+            cpu: "0.1"
+            memory: 10Mi
+          limits:
+            cpu: "1"  # 文字列注意
+            memory: 100Mi
+        # 今回は "go.uber.org/automaxprocs" を使っているので指定不要だが、
+        # CPU を limit するときは必ず GOMAXPROCS を制限すること
+        # env:
+        # - name: GOMAXPROCS
+        #   value: "1"
+        ports:
+        - name: http  # port には名前を付けるのが便利
+          containerPort: 8080
+          protocol: TCP
+        startupProbe:  # 起動が遅いアプリでは指定しましょう
+          httpGet:
+            path: /health/live
+            port: http
+          failureThreshold: 30
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /health/live
+            port: http
+        readinessProbe:
+          httpGet:
+            path: /health/ready
+            port: http
+        # 今回のアプリでは必要ないが、一般には以下の preStop を付けておくと
+        # graceful termination できる
+        # lifecycle:
+        #   preStop:
+        #     exec:
+        #       command: ["/bin/sleep", "5"]
