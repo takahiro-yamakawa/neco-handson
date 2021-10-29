@@ -1,0 +1,26 @@
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: takahiro-yamakawa-necohandson
+  namespace: sandbox
+  annotations:
+    metric-config.external.ready-pods-auto-scale.prometheus/query: |
+      scalar(sum(webapp_server_ready==0) OR on() vector(0) + 3)
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: takahiro-yamakawa-necohandson
+  minReplicas: 1
+  maxReplicas: 20
+  metrics:
+  - type: External
+    external:
+      metric:
+        name: ready-pods-auto-scale
+        selector:
+          matchLabels:
+            type: prometheus  # required
+      target:
+        type: Value
+
