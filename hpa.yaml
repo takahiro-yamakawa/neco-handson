@@ -22,5 +22,6 @@ spec:
           matchLabels:
             type: prometheus  # required
       target:
-        type: Value
+        type: AvarageValue
+        averageValue: 10
 
