@@ -5,7 +5,7 @@ metadata:
   namespace: sandbox
   annotations:
     metric-config.external.ready-pods-auto-scale.prometheus/query: |
-      scalar(sum(webapp_server_ready==0) OR on() vector(0) + 3)
+      scalar(sum(webapp_server_ready==0) OR on() vector(0))
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
@@ -22,6 +22,6 @@ spec:
           matchLabels:
             type: prometheus  # required
       target:
-        type: AvarageValue
-        averageValue: 10
+        type: Value
+        value: "3"
 
